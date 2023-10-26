@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "search-news"
+version = "0.1.0"
+description = "The first python project from Upstage AI Bootcamp."
+authors = ["SoHyeonos248 <79961865+SoHyeonos248@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyqt6 = "^6.5.3"
+
+[tool.poetry.group.dev.dependencies]
+PyQt6 = "^6.5.3"
+selenium = "^4.14.0"
+Django = "^4.2.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
