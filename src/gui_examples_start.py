@@ -1,7 +1,9 @@
 import sys
 from random import choice
 
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QVBoxLayout
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QVBoxLayout, QMenu
 
 # pyqt에서는 단 하나의 QApplication이 필요하며, 단 하나만 존재해야 한다.
 # sys.argv로 PyQt application에 command line arguments를 전달.
@@ -23,8 +25,66 @@ def Run() :
     
     # application을 종료하거나 event loop가 멈추지 않는 한 이곳으로 도달하지 않음
     
+class MainWindow(QMainWindow) :     # context menu example. (우클릭하면 나오는 메뉴칸들 예제)
+    def __init__(self) :
+        super().__init__()
+        
+        #self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        #self.customContextMenuRequested.connect(self.on_context_menu)
+    
+    def contextMenuEvent(self, e) :
+        context = QMenu(self)
+        context.addAction(QAction("text1", self))
+        context.addAction(QAction("text2", self))
+        context.addAction(QAction("text3", self))
+        context.exec(e.globalPos())         # 엥 이거랑 아래 거랑 뭐가 다른 거지..
+        #context.exec(self.mapToGlobal(pos))        # 아 똑같나봄. 강의 문서에 entirely up to you which you choose.라고 되어 잇음
 
-class MainWindow(QMainWindow) :
+    
+class MainWindow_3(QMainWindow):          # mouse click event example
+    def __init__(self):
+        super().__init__()
+        self.label = QLabel("Click in this window")
+        self.setCentralWidget(self.label)
+
+    def mouseMoveEvent(self, e):
+        self.label.setText("mouseMoveEvent")
+
+    def mousePressEvent(self, e):
+        if e.button() == Qt.MouseButton.LeftButton:
+            # handle the left-button press in here
+            self.label.setText("mousePressEvent LEFT")
+
+        elif e.button() == Qt.MouseButton.MiddleButton:
+            # handle the middle-button press in here.
+            self.label.setText("mousePressEvent MIDDLE")
+
+        elif e.button() == Qt.MouseButton.RightButton:
+            # handle the right-button press in here.
+            self.label.setText("mousePressEvent RIGHT")
+
+    def mouseReleaseEvent(self, e):
+        if e.button() == Qt.MouseButton.LeftButton:
+            self.label.setText("mouseReleaseEvent LEFT")
+
+        elif e.button() == Qt.MouseButton.MiddleButton:
+            self.label.setText("mouseReleaseEvent MIDDLE")
+
+        elif e.button() == Qt.MouseButton.RightButton:
+            self.label.setText("mouseReleaseEvent RIGHT")
+
+    def mouseDoubleClickEvent(self, e):
+        if e.button() == Qt.MouseButton.LeftButton:
+            self.label.setText("mouseDoubleClickEvent LEFT")
+
+        elif e.button() == Qt.MouseButton.MiddleButton:
+            self.label.setText("mouseDoubleClickEvent MIDDLE")
+
+        elif e.button() == Qt.MouseButton.RightButton:
+            self.label.setText("mouseDoubleClickEvent RIGHT")
+
+
+class MainWindow_2(QMainWindow) :           # 칸에 텍스트를 입력하는 대로 label이 변화하는 예제
     def __init__(self) :
         super().__init__()          # subclass로 Qt class를 생성할 때 반드시 super().__init__()을 불러야 함
         
