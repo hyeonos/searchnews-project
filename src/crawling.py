@@ -10,10 +10,82 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # 이걸 class로 만들 것인가, 아니면 function으로 만들 것인가.
 def News_Crawling(word) :
-    lang = is_korean(word)      # 한글이면 True, 영어면 False
-    
     return crawling_selenium(word)
 
+
+
+
+def News_Content_Crawling(link) :
+    print('news content crawling...')
+    
+    # Chrome 옵션 설정 (headless 모드로 실행)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+
+    # Selenium을 사용하여 Chrome 브라우저 실행
+    browser = webdriver.Chrome(options=chrome_options)
+
+    # 웹 페이지에 접속
+    browser.get(link)
+
+    # 뉴스 내용 가져오기
+    content_list = []
+    article = []
+    
+    try :
+        print('first try')
+        # cls = '[class*="' + cls + '"]'
+        news_content = browser.find_elements(By.CSS_SELECTOR, ('[class*="article"]'))
+        
+        for element in news_content :
+            if len(element.text) > 500 :
+                article = check_article_content(element.text)
+            #print(element.text)  # 요소의 텍스트 출력
+    except Exception as e:
+        print('no search element found by article tag, Error occured : ', e)
+    
+    if news_content == [] or len(article) == 0:
+        print('second try')
+        try :
+            # cls = '[class*="' + cls + '"]'
+            news_content = browser.find_elements(By.CSS_SELECTOR, ('[class*="news"]'))
+            for element in news_content :
+                if len(element.text) > 500 :
+                    article = check_article_content(element.text)
+                #print(element.text)  # 요소의 텍스트 출력
+        
+        except Exception as e:
+            print('no search element found by article tag, Error occured : ', e)    
+    
+    print('================================================================')
+
+    
+    if len(article) == 0 :
+        article = ['뉴스 내용을 크롤링해 오는 데 실패했습니다.', f'link : {link}']
+    # Selenium 종료
+    browser.quit()
+    
+    return article
+
+
+
+def check_article_content(text) :
+    print('check if text is article content...')
+    
+    final_text = []
+    
+    splitted_text = text.split('\n')
+    
+    for t in splitted_text :
+        if len(t) > 50 :
+            if t[-1] == '.' or t[-1] == ' ' :
+                final_text.append(t)
+        else :
+            #print(t, '    [', t[-1], ']')
+            pass
+            #splitted_text.remove(t)
+    
+    return final_text
 
 
 def crawling_selenium(word) :
@@ -108,14 +180,4 @@ def crawling_beautifulsoup(word) :
     else:
         print("요청이 실패했습니다. 상태 코드:", res.status_code)
         
-        
-        
-
-def is_korean(word) :
-    if re.compile("[ㄱ-ㅎ가-힣]+").search(word) :
-        print('입력된 단어는 한글, 한글 뉴스 검색')
-        return True
-    else :      # 입력된 단어 영어.
-        print('입력된 단어는 영어, 영어 뉴스 검색')
-        return False
         

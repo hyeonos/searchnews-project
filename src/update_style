@@ -1,0 +1,7 @@
+QDialog{
+    background:white;
+}
+
+QPushButton{
+    background:black
+}
