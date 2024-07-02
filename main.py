@@ -6,8 +6,5 @@
 from src.gui import Run
 
 
-# 공공데이터 사용도 염두해 보기.
-
-
 if __name__ == '__main__' :
     Run()

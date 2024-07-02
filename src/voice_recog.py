@@ -11,7 +11,7 @@ def SpeechRecognition() :
 
     with sr.Microphone() as source :
         print("Say something ... ")
-        recognizer.adjust_for_ambient_noise(source)     # 배경 소음 조절?
+        recognizer.adjust_for_ambient_noise(source)     # 배경 소음 조절
         audio = recognizer.listen(source)
         print(audio)
         

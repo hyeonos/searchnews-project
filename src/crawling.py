@@ -5,14 +5,11 @@ from bs4 import BeautifulSoup
 from selenium import webdriver 
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 
 
-# 이걸 class로 만들 것인가, 아니면 function으로 만들 것인가.
+
 def News_Crawling(word) :
     return crawling_selenium(word)
-
-
 
 
 def News_Content_Crawling(link) :
@@ -29,30 +26,25 @@ def News_Content_Crawling(link) :
     browser.get(link)
 
     # 뉴스 내용 가져오기
-    content_list = []
     article = []
     
     try :
-        print('first try')
-        # cls = '[class*="' + cls + '"]'
+        print('first try: 뉴스의 본문이 article class에 있을 경우')
         news_content = browser.find_elements(By.CSS_SELECTOR, ('[class*="article"]'))
         
         for element in news_content :
             if len(element.text) > 500 :
                 article = check_article_content(element.text)
-            #print(element.text)  # 요소의 텍스트 출력
     except Exception as e:
         print('no search element found by article tag, Error occured : ', e)
     
     if news_content == [] or len(article) == 0:
-        print('second try')
+        print('second try: 뉴스의 본문이 news class에 있을 경우')
         try :
-            # cls = '[class*="' + cls + '"]'
             news_content = browser.find_elements(By.CSS_SELECTOR, ('[class*="news"]'))
             for element in news_content :
                 if len(element.text) > 500 :
                     article = check_article_content(element.text)
-                #print(element.text)  # 요소의 텍스트 출력
         
         except Exception as e:
             print('no search element found by article tag, Error occured : ', e)    
@@ -81,9 +73,7 @@ def check_article_content(text) :
             if t[-1] == '.' or t[-1] == ' ' :
                 final_text.append(t)
         else :
-            #print(t, '    [', t[-1], ']')
             pass
-            #splitted_text.remove(t)
     
     return final_text
 
@@ -116,11 +106,6 @@ def crawling_selenium(word) :
         news_link = browser.find_elements(By.CLASS_NAME, 'WlydOe')
         
         for company, title, info, link in zip(news_company, news_title, news_info, news_link) :
-            # print(company.text)
-            # print(title.text)
-            # print(info.text)
-            # print(link.get_attribute('href'))
-            # print("================================================================")
             news = {"company":company.text,
                     "title":title.text,
                     "info":info.text,
@@ -158,23 +143,6 @@ def crawling_beautifulsoup(word) :
         # 웹 페이지 내용을 파싱
         soup = BeautifulSoup(res.text, "html.parser")
         print("soup parsed ::: \n", soup)
-
-
-        '''
-        print('제대로 파싱되었는지 확인! : ', soup.prettify())
-        # 원하는 정보 추출
-        # 예를 들어, 웹 페이지의 제목 가져오기
-        # soup.find('a', attrs={"class": "Nbtn_upload"})
-        # divTag = soup.find_all("div", {"class":"dr_article"})
-        #test_div = soup.select("div.SoaBEf")
-        test_div = soup.find_all("div")
-        # BNeawe vvjwJb AP7Wnd : news title
-        # lRVwie : 뉴스 기사 회사
-        # 
-        news_divs = soup.find_all("div", {"class" : "BNeaWe"})        # , class="SoaBEf"
-        print('soup.find_all div 결과 : \n', test_div)
-        print("soup.find_all 결과 : \n", news_divs)        
-        '''
         
         # 다른 정보를 가져오거나 페이지 내에서 원하는 작업을 수행할 수 있습니다.
     else:

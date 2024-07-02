@@ -2,7 +2,6 @@ import sqlite3
 
 
 
-
 class ScrapDB() :
     
     def __init__(self) :
@@ -25,7 +24,7 @@ class ScrapDB() :
         conn = self.get_db_connection()
         cursor = conn.cursor()
         sql = "SELECT * FROM news_scraps"
-        cursor = conn.execute(sql)     # 수습기간 -> 이거 없애주세영?
+        cursor = conn.execute(sql)
         results = cursor.fetchall()
         
         return results
@@ -34,13 +33,11 @@ class ScrapDB() :
     def add_scrap(self, company, title, content):
         conn = self.get_db_connection()
         cursor = conn.cursor()
-        #sql = f"""INSERT INTO news_scraps (company, title, content) VALUES ('{company}', '{title}', '{content}')"""
         
         sql = "INSERT INTO news_scraps (company, title, content) VALUES (?, ?, ?)"
         cursor.execute(sql, (company, title, content))
         print(sql)
-        #cursor.execute(sql) # 실행해
-        conn.commit() # 반영해
+        conn.commit() # database에 스크랩한 뉴스 정보 반영
         conn.close()
     
     
